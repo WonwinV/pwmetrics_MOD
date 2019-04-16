@@ -76,6 +76,7 @@ export interface GSheetsValuesToAppend {
   5: number; // SI timing
   6: number; // TTFCPUIDLE timing
   7: number; // TTI timing
+  8: number; // ping
 }
 
 export interface GSheetsAppendResultsOptions {

@@ -9,6 +9,8 @@ import * as gsheets  from './gsheets';
 // @todo add 'import' after moving all stuff to typescript
 const { getMessage } = require('../utils/messages');
 const { METRICS } = require('../metrics/metrics');
+const dns = require('dns');
+var tcpp = require('tcp-ping');
 
 const SHEET_TYPES = {
   'GOOGLE_SHEETS': 'GOOGLE_SHEETS'
@@ -48,8 +50,23 @@ export class Sheets {
   async appendResultsToGSheets(results: Array<MetricsResults>) {
     let valuesToAppend: Array<GSheetsValuesToAppend> = [];
     results.forEach(data => {
+      let ipppp = '';
+      let pingg = 100;
+      dns.lookup(data.requestedUrl, (err, address, family) => {
+        console.log("HELLLOOO~~~~~~");
+        ipppp = address;
+      });
+      tcpp.ping({ address: ipppp }, function(err, data) {
+          pingg = data.avg;
+      });
+      let dateObj;
       const getTiming = (key: string) => data.timings.find(t => t.id === key).timing;
-      const dateObj = new Date(data.generatedTime);
+      try {
+        dateObj = new Date(data.generatedTime);
+      } catch (error) {
+        //blah
+      }
+      pingg = 100;
       // order matters
       valuesToAppend.push([
         data.lighthouseVersion,
@@ -60,6 +77,7 @@ export class Sheets {
         getTiming(METRICS.SI),
         getTiming(METRICS.TTFCPUIDLE),
         getTiming(METRICS.TTI),
+        pingg
       ]);
     });
 
